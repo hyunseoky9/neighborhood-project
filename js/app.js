@@ -9,7 +9,8 @@ function initMap() {
   var marker = new google.maps.Marker({
     position: tribeca,
     map: map,
-    title: 'First Marker!'
+    title: 'First Marker!',
+    animation: google.maps.Animation.DROP
   });
 }
 /*var map;
