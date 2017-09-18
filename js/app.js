@@ -10,7 +10,7 @@ function initMap() {
     {title: 'Omnia', location: {lat: 36.116940, lng: -115.174354}}
   ];
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 40.7413549, lng: -73.9980244},
+    center: {lat: 36.116940, lng: -115.174354},
     zoom: 13
   });
   var tribeca = {lat: 40.719526, lng: -74.0089934};
@@ -26,4 +26,17 @@ function initMap() {
   marker.addListener('click', function() {
     infowindow.open(map, marker);
   });
-}
+  for( i=0; i<clubs.length; i++) {
+    var marker = new google.maps.Marker({
+      map: map,
+      position: clubs[i].location,
+      title: clubs[i].title,
+      animation: google.maps.Animation.DROP,
+      id: i
+    })
+    markers.push(marker);
+    marker.addListener('click', function() {
+      populateInfoWindow(this, largeInfoWindow);
+    });
+  };
+};
