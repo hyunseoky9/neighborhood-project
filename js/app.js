@@ -1,6 +1,14 @@
 var map;
+var markers = [];
 
 function initMap() {
+  var clubs = [
+    {title: 'Hakkasan', location: {lat: 36.101340, lng: -115.172182}},
+    {title: 'XS', location: {lat: 36.127938, lng: -115.164742}},
+    {title: 'Marquee', location: {lat: 36.109526, lng: -115.174151}},
+    {title: 'OneOak', location: {lat: 36.121875, lng: -115.174419}},
+    {title: 'Omnia', location: {lat: 36.116940, lng: -115.174354}}
+  ];
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 40.7413549, lng: -73.9980244},
     zoom: 13
