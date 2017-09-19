@@ -75,7 +75,6 @@ function initMap() {
     }
   }
   //tell map to fit the markers into the map
-  map.fitbounds(bounds)
+  map.fitBounds(bounds)
 };
 
-initMap();
