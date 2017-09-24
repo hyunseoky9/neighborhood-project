@@ -65,7 +65,7 @@ function initMap() {
     clubs[i].address = venue.location.address
     clubs[i].imgSrc = imgSrc
     clubs[i].name = venue.name
-    clubs[i].insta = venue.contact.instagram
+    clubs[i].fb = venue.contact.facebookUsername
     clubs[i].phone = venue.contact.phone
     //console.log(clubs)
 
@@ -93,10 +93,12 @@ function initMap() {
       info = clubs[marker.id]
       var output = '<div>'
       output += '<img src="'+info.imgSrc+'", alt="img">'
-      output += '<p>'+ info.name +'</p>'
-      output += '<p> address:'+ info.address +'</p>'
-      output += '<p> IG:'+ info.insta +'</p>'
-      output += '<p> phone#:'+ info.phone +'</p>'
+      output += '<p>'+ info.title +'</p>'
+      output += '<p> address: '+ info.address +'</p>'
+      if( info.fb != undefined ) {
+        output += '<p> FB: '+ info.fb +'</p>'  
+      } else { output += '<p> FB: None </p>' }
+      output += '<p> phone#: '+ info.phone +'</p>'
       output += '</div>'
       infowindow.marker = marker;
       infowindow.setContent(output);
@@ -111,12 +113,23 @@ function initMap() {
   map.fitBounds(bounds)
 };
 
-console.log(markers);  
+//console.log(clubs);  
 
 var Club = function(data) {
-
+  this.name = ko.observable(data.title);
 };
 
 var ViewModel = function() {
+  var self = this;
+  this.clubList = ko.observableArray([]);
+  clubs.forEach(function(item) {
+    self.clubList.push( new Club(item) );
+  });
+  console.log(this.clubList()[0])
+};
 
-}
+ko.applyBindings(new ViewModel())
+/*  initialCats.forEach(function(item) {
+    self.catList.push( new Cat(item) );
+  });
+  */
