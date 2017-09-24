@@ -19,7 +19,7 @@
 <aside class="menu" id="menu">
 	<input class='search-box' placeholder="search..." type="search" data-bind="value:query, valueUpdate: 'keyup'"  autocomplete='off'>
 	<ul data-bind='foreach: clubList()'>
-	<li data-bind='text: name'></li>
+	<li data-bind='text: name, click: $parent.openwindow'></li>
 	</ul>
 </aside>
 

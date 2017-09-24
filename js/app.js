@@ -1,10 +1,10 @@
 //Data
 var clubs = [
-    {title: 'Hakkasan', location: {lat: 36.101340, lng: -115.172182}},
-    {title: 'XS', location: {lat: 36.127938, lng: -115.164742}},
-    {title: 'Marquee', location: {lat: 36.109526, lng: -115.174151}},
-    {title: '1Oak', location: {lat: 36.121875, lng: -115.174419}},
-    {title: 'Omnia', location: {lat: 36.116940, lng: -115.174354}}
+    {title: 'Hakkasan', location: {lat: 36.101340, lng: -115.172182}, id: 0},
+    {title: 'XS', location: {lat: 36.127938, lng: -115.164742}, id: 1},
+    {title: 'Marquee', location: {lat: 36.109526, lng: -115.174151}, id: 2},
+    {title: '1Oak', location: {lat: 36.121875, lng: -115.174419}, id: 3},
+    {title: 'Omnia', location: {lat: 36.116940, lng: -115.174354}, id: 4}
   ];
 
 var map;
@@ -55,7 +55,9 @@ function initMap() {
         success: function(data) {
           photo = data
         }
-      });
+      }).error(function(e){
+        photo
+      })
       return photo
     })();
     
@@ -77,12 +79,26 @@ function initMap() {
       animation: google.maps.Animation.DROP,
       id: i
     })
+
+/*function toggleBounce() {
+  if (marker.getAnimation() !== null) {
+    marker.setAnimation(null);
+  } else {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+  }
+}*/
+
     //put each marker in the array.
     markers.push(marker);
     //Extend the bounds
     bounds.extend(marker.position);
     //click to get info window
     marker.addListener('click', function() {
+      this.setAnimation(google.maps.Animation.BOUNCE);
+      var that = this;
+      setTimeout(function() {
+        that.setAnimation(null)
+      }, 2800);
       populateInfoWindow(this, largeInfoWindow);
     });
   };
@@ -117,6 +133,7 @@ function initMap() {
 
 var Club = function(data) {
   this.name = ko.observable(data.title);
+  this.id = ko.observable(data.id)
 };
 
 var ViewModel = function() {
@@ -127,13 +144,17 @@ var ViewModel = function() {
   clubs.forEach(function(item) {
     self.clubList.push( new Club(item) );
   });
-  console.log(this.clubList()[0].name);
+  //filtering function. src="https://opensoul.org/2011/06/23/live-search-with-knockoutjs/"
   this.search = function(value) {
     array = self.clubList.removeAll();
+    for(var i in markers) {
+        markers[i].setMap(null)
+    }
     
     for(x in clubs) {
       if ( clubs[x].title.toLowerCase().search(value.toLowerCase() ) >= 0 ) {
         self.clubList.push( new Club(clubs[x]) );
+        markers[clubs[x].id].setMap(map);
       }
       
       //console.log(array[x].name)
@@ -145,13 +166,15 @@ var ViewModel = function() {
     if ( document.getElementById('menu').style.display == "none" ) {
       document.getElementById('menu').style.display = "block"
     } else { document.getElementById('menu').style.display = "none" }
-  }
+  };
+
+  this.openwindow = function(clickedClub) {
+    for ( var i in markers) {
+      if (clickedClub.id() == i) {
+        google.maps.event.trigger(markers[i],'click')
+      }
+    }
+  };
 
 };
 ko.applyBindings( new ViewModel() )
-
-
-/*  initialCats.forEach(function(item) {
-    self.catList.push( new Cat(item) );
-  });
-  */
