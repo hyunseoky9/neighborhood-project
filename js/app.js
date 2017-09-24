@@ -122,13 +122,35 @@ var Club = function(data) {
 var ViewModel = function() {
   var self = this;
   this.clubList = ko.observableArray([]);
+  this.query = ko.observable('')
+
   clubs.forEach(function(item) {
     self.clubList.push( new Club(item) );
   });
-  console.log(this.clubList()[0])
-};
+  console.log(this.clubList()[0].name);
+  this.search = function(value) {
+    array = self.clubList.removeAll();
+    
+    for(x in clubs) {
+      if ( clubs[x].title.toLowerCase().search(value.toLowerCase() ) >= 0 ) {
+        self.clubList.push( new Club(clubs[x]) );
+      }
+      
+      //console.log(array[x].name)
+    }
+  }
+  this.query.subscribe(this.search)
 
-ko.applyBindings(new ViewModel())
+  this.toggle = function() {
+    if ( document.getElementById('menu').style.display == "none" ) {
+      document.getElementById('menu').style.display = "block"
+    } else { document.getElementById('menu').style.display = "none" }
+  }
+
+};
+ko.applyBindings( new ViewModel() )
+
+
 /*  initialCats.forEach(function(item) {
     self.catList.push( new Cat(item) );
   });

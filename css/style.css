@@ -1,3 +1,7 @@
+body {
+	margin: 0 0 0 0;
+}
+
 #map {
 	position: fixed;
  	width: 100%;
@@ -7,7 +11,7 @@
 }
 
 .menu-btn {
-	padding-top: 17px;
+	padding-top: 15px;
 }
 
 .menu-btn span {
@@ -22,7 +26,7 @@
 
 .menu {
 	position: fixed;
-	display: inline-block;
+	display: block;
 	background-color: rgba(200,200,200,0.5);
 	width: 25%;
 	height: 100%;
@@ -30,8 +34,24 @@
 	z-index: 2;
 }
 
+.search-box {
+	width: 90%;
+	margin: auto;
+}
+
 
 header {
 	height: 8%;
 	background-color: rgb(53, 94, 162);
+}
+
+@media screen and (max-width: 650px) {
+	.menu{
+		display: none;
+		width: 40%;
+	}
+}
+
+@media screen and (min-width: 651px) {
+	.menu{ display: block; }
 }
