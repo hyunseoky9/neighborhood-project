@@ -26,55 +26,33 @@ function initMap() {
     //bring in JSON data of the venue thru 4square api
     search_url = 'https://api.foursquare.com/v2/venues/search?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&ll=36.101340,-115.172182&query='+
     clubs[i].title +'&v=20130815'
-    var timeout = setTimeout(function() {
-      alert('Map image and information for the clubs could not be loaded... Try checking the firewall status, and if all is good, we messed up. Sorry');
-    },4000);
+//    var timeout = setTimeout(function() {
+//      alert('Map image and information for the clubs could not be loaded... Try checking the firewall status, and if all is good, we messed up. Sorry');
+//    },4000);
     //ajax request callback method sourced from: https://stackoverflow.com/questions/6240324/get-a-variable-after-ajax-done
-    function myAjaxCheck(callback) {
-      $.getJSON(search_url, function(data) {
-        console.log(data);
-        venue = data
-        callback(venue)
-        clearTimeout(timeout)
-        })
-    };
-    var myVariable;
-    check = myAjaxCheck(function(returnedData) {
-      myVariable = returnedData;
-      return myVariable
-    });
-    console.log(check)
-    debugger;
-    venue = venue.response.venues[0]
-    var club_id = venue.id
-
-    //bring in JSON data on the photos of the venue thru 4square api
-    photo_url = 'https://api.foursquare.com/v2/venues/'+club_id+'/photos?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&v=20170605'
-    var photo = (function() {
-      var photo = null;
-      $.ajax({
-        async: false,
-        global: false,
-        url: photo_url,
-        dataType: 'json',
-        success: function(data) {
-          photo = data
-        }
-      }).error(function(e){
-        //something here
-      })
-      return photo
-    })();
-    
-    prefix = 'https://igx.4sqi.net/img/general/width200'
-    imgSrc = prefix + photo.response.photos.items[0].suffix
-
-    clubs[i].address = venue.location.address
-    clubs[i].imgSrc = imgSrc
-    clubs[i].name = venue.name
-    clubs[i].fb = venue.contact.facebookUsername
-    clubs[i].phone = venue.contact.phone
-    //console.log(clubs)
+    var tit = clubs[i].title
+    $.getJSON(search_url, function(data) {
+      var ve = data.response.venues[0];
+      photo_url = 'https://api.foursquare.com/v2/venues/'+ve.id+'/photos?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&v=20170605';
+      //photo ajax
+      $.getJSON(photo_url, function(data) {
+        prefix = 'https://igx.4sqi.net/img/general/width200'
+        imgSrc = prefix + data.response.photos.items[0].suffix
+        var ph_output = ''
+        ph_output += '<img id="ph-'+ tit +'" src="'+ imgSrc +'" alt="club pic">';
+        $('#hidden-photo').append(ph_output)
+      });
+      var output = '';
+      output += '<div id="'+ tit +'">';
+      output += '<p>'+ tit +'</p>';
+      output += '<p>Address: '+ ve.location.address +'</p>';
+      if (ve.contact.facebookUsername != undefined) {
+        output += '<p>FB: '+ ve.contact.facebookUsername +'</p>'
+      } else { output += '<p>FB: None </p>'};
+      output += '<p>Phone#: '+ ve.contact.phone +'</p>';
+      output += '</div>'
+      $('#hidden-info').append(output);
+    }).fail(function(e) {alert('shit')})
 
     /////////////////////PUTS MARKERS////////////////////////
     var marker = new google.maps.Marker({
@@ -84,14 +62,6 @@ function initMap() {
       animation: google.maps.Animation.DROP,
       id: i
     })
-
-/*function toggleBounce() {
-  if (marker.getAnimation() !== null) {
-    marker.setAnimation(null);
-  } else {
-    marker.setAnimation(google.maps.Animation.BOUNCE);
-  }
-}*/
 
     //put each marker in the array.
     markers.push(marker);
