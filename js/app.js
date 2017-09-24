@@ -26,20 +26,25 @@ function initMap() {
     //bring in JSON data of the venue thru 4square api
     search_url = 'https://api.foursquare.com/v2/venues/search?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&ll=36.101340,-115.172182&query='+
     clubs[i].title +'&v=20130815'
-    var venue = (function () {
-      var venue = null;
-      $.ajax({
-        async: false,
-        global: false,
-        url: search_url,
-        dataType: 'json',
-        success: function(data) {
-        //console.log(response);
+    var timeout = setTimeout(function() {
+      alert('Map image and information for the clubs could not be loaded... Try checking the firewall status, and if all is good, we messed up. Sorry');
+    },4000);
+    //ajax request callback method sourced from: https://stackoverflow.com/questions/6240324/get-a-variable-after-ajax-done
+    function myAjaxCheck(callback) {
+      $.getJSON(search_url, function(data) {
+        console.log(data);
         venue = data
-        }
-      });
-      return venue;
-    })();
+        callback(venue)
+        clearTimeout(timeout)
+        })
+    };
+    var myVariable;
+    check = myAjaxCheck(function(returnedData) {
+      myVariable = returnedData;
+      return myVariable
+    });
+    console.log(check)
+    debugger;
     venue = venue.response.venues[0]
     var club_id = venue.id
 
@@ -56,7 +61,7 @@ function initMap() {
           photo = data
         }
       }).error(function(e){
-        photo
+        //something here
       })
       return photo
     })();
