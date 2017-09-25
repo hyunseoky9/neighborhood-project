@@ -2,6 +2,14 @@ body {
 	margin: 0 0 0 0;
 }
 
+#hidden-info {
+	display: none;
+}
+
+#hidden-photo {
+	display: none;
+}
+
 #map {
 	position: fixed;
  	width: 100%;

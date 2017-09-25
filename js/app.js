@@ -30,21 +30,25 @@ function initMap() {
 //      alert('Map image and information for the clubs could not be loaded... Try checking the firewall status, and if all is good, we messed up. Sorry');
 //    },4000);
     //ajax request callback method sourced from: https://stackoverflow.com/questions/6240324/get-a-variable-after-ajax-done
-    var tit = clubs[i].title
-    $.getJSON(search_url, function(data) {
+    function myAjaxCheck(callback) {
+      $.ajax({
+        url: search_url,
+        dataType: 'json',
+        success: function(data) {
+        callback(data)
+        }
+      }).fail(function(e) {alert('Request has failed...')})
+    };
+    myAjaxCheck(function(returnedData) {
+      console.log(clubs)
+    });
+    debugger;
+    /*$.getJSON(search_url, function(data) {
       var ve = data.response.venues[0];
-      photo_url = 'https://api.foursquare.com/v2/venues/'+ve.id+'/photos?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&v=20170605';
-      //photo ajax
-      $.getJSON(photo_url, function(data) {
-        prefix = 'https://igx.4sqi.net/img/general/width200'
-        imgSrc = prefix + data.response.photos.items[0].suffix
-        var ph_output = ''
-        ph_output += '<img id="ph-'+ tit +'" src="'+ imgSrc +'" alt="club pic">';
-        $('#hidden-photo').append(ph_output)
-      });
       var output = '';
-      output += '<div id="'+ tit +'">';
-      output += '<p>'+ tit +'</p>';
+      var name = ve.name.split(' ')[0];
+      output += '<div id="'+ clubs[i].title +'wrap">';
+      output += '<p>'+ name +'</p>';
       output += '<p>Address: '+ ve.location.address +'</p>';
       if (ve.contact.facebookUsername != undefined) {
         output += '<p>FB: '+ ve.contact.facebookUsername +'</p>'
@@ -52,7 +56,7 @@ function initMap() {
       output += '<p>Phone#: '+ ve.contact.phone +'</p>';
       output += '</div>'
       $('#hidden-info').append(output);
-    }).fail(function(e) {alert('shit')})
+    }).fail(function(e) {alert('shit')})*/
 
     /////////////////////PUTS MARKERS////////////////////////
     var marker = new google.maps.Marker({
@@ -82,7 +86,10 @@ function initMap() {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
       info = clubs[marker.id]
-      var output = '<div>'
+      console.log(info.title)
+      //dump = document.getElementById(info.title).text();
+
+      /*var output = '<div>'
       output += '<img src="'+info.imgSrc+'", alt="img">'
       output += '<p>'+ info.title +'</p>'
       output += '<p> address: '+ info.address +'</p>'
@@ -90,7 +97,8 @@ function initMap() {
         output += '<p> FB: '+ info.fb +'</p>'  
       } else { output += '<p> FB: None </p>' }
       output += '<p> phone#: '+ info.phone +'</p>'
-      output += '</div>'
+      output += '</div>'*/
+      output =document.getElementById('hidden-info').innerHTML
       infowindow.marker = marker;
       infowindow.setContent(output);
       infowindow.open(map, marker);
