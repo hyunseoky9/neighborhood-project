@@ -24,7 +24,7 @@ function initMap() {
   //temporary search_url
   // How to put a function outside of for loop so you don't have to use closure.
   // src: http://www.albertgao.xyz/2016/08/25/why-not-making-functions-within-a-loop-in-javascript/
-  var search_url = 'https://api.foursquare.com/v2/venues/search?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&ll=36.101340,-115.172182&query=hakkasan+nightclub&v=20130815'
+  
   function myAjaxCheck(callback,search) {
     $.ajax({
       url: search,
@@ -35,7 +35,7 @@ function initMap() {
     }).fail(function(e) {alert('Request has failed...');});
   }
   var j = 0;
-  ghostbuster = function(j) {
+  iwindowmaker = function(j) {
     myAjaxCheck(function(returnedData) {
       //Make infowindow html based on the ajax returned data;
       var ve = returnedData.response.venues[0];
@@ -48,11 +48,20 @@ function initMap() {
       } else { output += '<p>FB: None </p>';}
       output += '<p>Phone#: '+ ve.contact.phone +'</p>';
       output += '</div>';
-      console.log(output)
       //append the info in the didden div that google map api can pull from;
       $('#hidden-info').append(output);
     },search_url);
-  }
+  };
+
+  //Bounces the marker and populates the infowindow of the marker.
+  Bouncer = function () {
+      this.setAnimation(google.maps.Animation.BOUNCE);
+      var that = this;
+      setTimeout(function() {
+        that.setAnimation(null);
+      }, 2800);
+      populateInfoWindow(this, largeInfoWindow);
+    };
   //Make multiple markers and add infowindow infos thru loop.
   for(i=0; i<clubs.length; i++) {
     var num = i;
@@ -60,8 +69,7 @@ function initMap() {
     search_url = 'https://api.foursquare.com/v2/venues/search?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&ll=36.101340,-115.172182&query='+
     clubs[i].title +'&v=20130815';
 
-    ghostbuster(i);
-    debugger;
+    iwindowmaker(i);
 
     //PUTS MARKERS;
     var marker = new google.maps.Marker({
@@ -77,14 +85,7 @@ function initMap() {
     //Extend the bounds
     bounds.extend(marker.position);
     //click to get info window and put bounce animation
-    marker.addListener('click', function() {
-      this.setAnimation(google.maps.Animation.BOUNCE);
-      var that = this;
-      setTimeout(function() {
-        that.setAnimation(null);
-      }, 2800);
-      populateInfoWindow(this, largeInfoWindow);
-    });
+    marker.addListener('click', Bouncer);
   }
   //populating the marker with info in the info window.
   function populateInfoWindow(marker, infowindow) {
@@ -108,7 +109,7 @@ function initMap() {
 //Fallback on google map api not working
 
 function googleError() {
-  alert('Sorry, google map api not working...')
+  alert('Sorry, google map api not working...');
 }
 
 //KNOCKOUT JS  
