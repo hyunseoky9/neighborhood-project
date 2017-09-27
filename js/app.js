@@ -44,7 +44,7 @@ function initMap() {
         output += '<div id="'+ clubs[j].title +'">';
         output += '<h3>'+ clubs[j].title +'</h3>';
         output += '<p>Address: '+ ve.location.address +'</p>';
-        if (ve.contact.facebookUsername != undefined) {
+        if (ve.contact.facebookUsername !== undefined) {
           output += '<p>FB: '+ ve.contact.facebookUsername +'</p>';
         } else { output += '<p>FB: None </p>';}
         output += '<p>Phone#: '+ ve.contact.phone +'</p>';
