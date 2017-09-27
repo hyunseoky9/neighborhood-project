@@ -97,6 +97,11 @@ function initMap() {
   map.fitBounds(bounds);
 }
 
+//Fallback on google map api not working
+
+function googleError() {
+  alert('Sorry, google map api not working...')
+}
 
 //KNOCKOUT JS  
 //Model
