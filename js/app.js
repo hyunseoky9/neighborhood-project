@@ -23,6 +23,7 @@ function initMap() {
   });
   //Make multiple markers and add infowindow infos thru loop.
   for( i=0; i<clubs.length; i++) {
+    var num = i
     //bring in JSON data of the venue thru 4square api
     search_url = 'https://api.foursquare.com/v2/venues/search?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&ll=36.101340,-115.172182&query='+
     clubs[i].title +'&v=20130815'
@@ -39,24 +40,23 @@ function initMap() {
         }
       }).fail(function(e) {alert('Request has failed...')})
     };
-    myAjaxCheck(function(returnedData) {
-      console.log(clubs)
-    });
-    debugger;
-    /*$.getJSON(search_url, function(data) {
-      var ve = data.response.venues[0];
-      var output = '';
-      var name = ve.name.split(' ')[0];
-      output += '<div id="'+ clubs[i].title +'wrap">';
-      output += '<p>'+ name +'</p>';
-      output += '<p>Address: '+ ve.location.address +'</p>';
-      if (ve.contact.facebookUsername != undefined) {
-        output += '<p>FB: '+ ve.contact.facebookUsername +'</p>'
-      } else { output += '<p>FB: None </p>'};
-      output += '<p>Phone#: '+ ve.contact.phone +'</p>';
-      output += '</div>'
-      $('#hidden-info').append(output);
-    }).fail(function(e) {alert('shit')})*/
+    (function(j) {
+      myAjaxCheck(function(returnedData) {
+        var ve = returnedData.response.venues[0];
+        var output = '';
+        output += '<div id="'+ clubs[j].title +'">';
+        output += '<h3>'+ clubs[j].title +'</h3>';
+        output += '<p>Address: '+ ve.location.address +'</p>';
+        if (ve.contact.facebookUsername != undefined) {
+          output += '<p>FB: '+ ve.contact.facebookUsername +'</p>'
+        } else { output += '<p>FB: None </p>'};
+        output += '<p>Phone#: '+ ve.contact.phone +'</p>';
+        output += '</div>'
+        console.log(output)
+        $('#hidden-info').append(output);
+        //console.log(clubs[j-1]);
+      })
+    })(i);
 
     /////////////////////PUTS MARKERS////////////////////////
     var marker = new google.maps.Marker({
@@ -86,7 +86,6 @@ function initMap() {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
       info = clubs[marker.id]
-      console.log(info.title)
       //dump = document.getElementById(info.title).text();
 
       /*var output = '<div>'
@@ -98,7 +97,7 @@ function initMap() {
       } else { output += '<p> FB: None </p>' }
       output += '<p> phone#: '+ info.phone +'</p>'
       output += '</div>'*/
-      output =document.getElementById('hidden-info').innerHTML
+      output =document.getElementById(info.title).innerHTML
       infowindow.marker = marker;
       infowindow.setContent(output);
       infowindow.open(map, marker);
@@ -139,7 +138,6 @@ var ViewModel = function() {
         self.clubList.push( new Club(clubs[x]) );
         markers[clubs[x].id].setMap(map);
       }
-      
       //console.log(array[x].name)
     }
   }
