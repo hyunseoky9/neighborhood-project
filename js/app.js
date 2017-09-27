@@ -21,39 +21,47 @@ function initMap() {
     center: {lat: 36.116940, lng: -115.174354},
     zoom: 13
   });
+  //temporary search_url
+  // How to put a function outside of for loop so you don't have to use closure.
+  // src: http://www.albertgao.xyz/2016/08/25/why-not-making-functions-within-a-loop-in-javascript/
+  var search_url = 'https://api.foursquare.com/v2/venues/search?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&ll=36.101340,-115.172182&query=hakkasan+nightclub&v=20130815'
+  function myAjaxCheck(callback,search) {
+    $.ajax({
+      url: search,
+      dataType: 'json',
+      success: function(data) {
+      callback(data);
+      }
+    }).fail(function(e) {alert('Request has failed...');});
+  }
+  var j = 0;
+  ghostbuster = function(j) {
+    myAjaxCheck(function(returnedData) {
+      //Make infowindow html based on the ajax returned data;
+      var ve = returnedData.response.venues[0];
+      var output = '';
+      output += '<div id="'+ clubs[j].title +'">';
+      output += '<h3>'+ clubs[j].title +'</h3>';
+      output += '<p>Address: '+ ve.location.address +'</p>';
+      if (ve.contact.facebookUsername !== undefined) {
+        output += '<p>FB: '+ ve.contact.facebookUsername +'</p>';
+      } else { output += '<p>FB: None </p>';}
+      output += '<p>Phone#: '+ ve.contact.phone +'</p>';
+      output += '</div>';
+      console.log(output)
+      //append the info in the didden div that google map api can pull from;
+      $('#hidden-info').append(output);
+    },search_url);
+  }
   //Make multiple markers and add infowindow infos thru loop.
   for(i=0; i<clubs.length; i++) {
     var num = i;
     //bring in JSON data of the venue thru 4square api
     search_url = 'https://api.foursquare.com/v2/venues/search?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&ll=36.101340,-115.172182&query='+
     clubs[i].title +'&v=20130815';
-    function myAjaxCheck(callback) {
-      $.ajax({
-        url: search_url,
-        dataType: 'json',
-        success: function(data) {
-        callback(data);
-        }
-      }).fail(function(e) {alert('Request has failed...');});
-    }
-    (function(j) {
-      myAjaxCheck(function(returnedData) {
-        //Make infowindow html based on the ajax returned data;
-        var ve = returnedData.response.venues[0];
-        var output = '';
-        output += '<div id="'+ clubs[j].title +'">';
-        output += '<h3>'+ clubs[j].title +'</h3>';
-        output += '<p>Address: '+ ve.location.address +'</p>';
-        if (ve.contact.facebookUsername !== undefined) {
-          output += '<p>FB: '+ ve.contact.facebookUsername +'</p>';
-        } else { output += '<p>FB: None </p>';}
-        output += '<p>Phone#: '+ ve.contact.phone +'</p>';
-        output += '</div>';
-        
-        //append the info in the didden div that google map api can pull from;
-        $('#hidden-info').append(output);
-      });
-    })(i);
+
+    ghostbuster(i);
+    debugger;
 
     //PUTS MARKERS;
     var marker = new google.maps.Marker({
