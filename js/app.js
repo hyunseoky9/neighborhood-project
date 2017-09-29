@@ -24,36 +24,6 @@ function initMap() {
   //temporary search_url
   // How to put a function outside of for loop so you don't have to use closure.
   // src: http://www.albertgao.xyz/2016/08/25/why-not-making-functions-within-a-loop-in-javascript/
-  
-  function myAjaxCheck(callback,search) {
-    $.ajax({
-      url: search,
-      dataType: 'json',
-      success: function(data) {
-      callback(data);
-      }
-    }).fail(function(e) {alert('Request has failed...');});
-  }
-  var j = 0;
-  iwindowmaker = function(j) {
-    myAjaxCheck(function(returnedData) {
-      //Make infowindow html based on the ajax returned data;
-      var ve = returnedData.response.venues[0];
-      var output = '';
-      output += '<div id="'+ clubs[j].title +'">';
-      output += '<h3>'+ clubs[j].title +'</h3>';
-      output += '<p>Address: '+ ve.location.address +'</p>';
-      if (ve.contact.facebookUsername !== undefined) {
-        output += '<p>FB: '+ ve.contact.facebookUsername +'</p>';
-      } else { output += '<p>FB: None </p>';}
-      output += '<p>Phone#: '+ ve.contact.phone +'</p>';
-      output += '</div>';
-      //append the info in the didden div that google map api can pull from;
-      largeInfowindow.setContent(output)
-      //$('#hidden-info').append(output);
-    },search_url);
-  };
-
   //Bounces the marker and populates the infowindow of the marker.
   function Bouncer(thismarker, l) {
       thismarker.setAnimation(google.maps.Animation.BOUNCE);
@@ -61,7 +31,6 @@ function initMap() {
       setTimeout(function() {
         thatmarker.setAnimation(null);
       }, 2800);
-      console.log(l)
       populateInfoWindow(thismarker, largeInfoWindow, l);
     };
   //Make multiple markers and add infowindow infos thru loop.
@@ -81,23 +50,22 @@ function initMap() {
       animation: google.maps.Animation.DROP,
       id: i
     });
-
     //put each marker in the array.
     markers.push(marker);
     //Extend the bounds
     bounds.extend(marker.position);
     //click to get info window and put bounce animation
-    marker.addListener('click', Bouncer(marker,i));
+    marker.addListener('click', listener.bind(null, marker));
+  }
+  function listener(marker) {
+    Bouncer(marker, marker.id)   
   }
   //populating the marker with info in the info window.
   function populateInfoWindow(marker, infowindow,k) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
-      //info = clubs[marker.id];
-      //output =document.getElementById(info.title).innerHTML;
       infowindow.marker = marker;
-      //console.log(k)
-      //infowindow.setContent(output);
+      //ajax call to get the infowindow material from 4square
       search = 'https://api.foursquare.com/v2/venues/search?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&ll=36.101340,-115.172182&query='+ clubs[k].title +'&v=20130815'; 
       $.ajax({
         url: search,

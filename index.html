@@ -1,33 +1,31 @@
 <html>
 <head>
-<link rel='stylesheet' type='text/css' href='css/style.css'>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link rel='stylesheet' type='text/css' href='css/style.css'>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>	
 
 
 <header>
-<div class="menu-btn" data-bind="click: toggle">
-<div></div>
-<span></span>
-<span></span>
-<span></span>
-</div>
+	<div class="menu-btn" data-bind="click: toggle">
+		<div></div>
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
 </header>
 
 <aside class="menu" id="menu">
 	<input class='search-box' placeholder="search..." type="search" data-bind="value:query, valueUpdate: 'keyup'"  autocomplete='off'>
 	<ul data-bind='foreach: clubList()'>
-	<li data-bind='text: name, click: $parent.openwindow'></li>
+		<li data-bind='text: name, click: $parent.openwindow'></li>
 	</ul>
 </aside>
 
 <div id="map"></div> 
-
-<div id='hidden-info'><h1>Yo</h1></div>
-<div id='hidden-photo'><h1>pictures</h1></div>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUDcwuQZ9SQCW_Df9oL4c17lymsxR6Aeo&callback=initMap" onerror="googleError()" async defer></script>
 <script src="js/lib/knockout-3.2.0.js"></script>
 <script src="js/app.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUDcwuQZ9SQCW_Df9oL4c17lymsxR6Aeo&callback=initMap" onerror="googleError()" async defer></script>
+
 </body>
