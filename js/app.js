@@ -49,27 +49,29 @@ function initMap() {
       output += '<p>Phone#: '+ ve.contact.phone +'</p>';
       output += '</div>';
       //append the info in the didden div that google map api can pull from;
-      $('#hidden-info').append(output);
+      largeInfowindow.setContent(output)
+      //$('#hidden-info').append(output);
     },search_url);
   };
 
   //Bounces the marker and populates the infowindow of the marker.
-  Bouncer = function () {
-      this.setAnimation(google.maps.Animation.BOUNCE);
-      var that = this;
+  function Bouncer(thismarker, l) {
+      thismarker.setAnimation(google.maps.Animation.BOUNCE);
+      var thatmarker = thismarker;
       setTimeout(function() {
-        that.setAnimation(null);
+        thatmarker.setAnimation(null);
       }, 2800);
-      populateInfoWindow(this, largeInfoWindow);
+      console.log(l)
+      populateInfoWindow(thismarker, largeInfoWindow, l);
     };
   //Make multiple markers and add infowindow infos thru loop.
-  for(i=0; i<clubs.length; i++) {
+  for(var i=0; i<clubs.length; i++) {
     var num = i;
     //bring in JSON data of the venue thru 4square api
     search_url = 'https://api.foursquare.com/v2/venues/search?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&ll=36.101340,-115.172182&query='+
     clubs[i].title +'&v=20130815';
 
-    iwindowmaker(i);
+    //iwindowmaker(i);
 
     //PUTS MARKERS;
     var marker = new google.maps.Marker({
@@ -85,16 +87,37 @@ function initMap() {
     //Extend the bounds
     bounds.extend(marker.position);
     //click to get info window and put bounce animation
-    marker.addListener('click', Bouncer);
+    marker.addListener('click', Bouncer(marker,i));
   }
   //populating the marker with info in the info window.
-  function populateInfoWindow(marker, infowindow) {
+  function populateInfoWindow(marker, infowindow,k) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
-      info = clubs[marker.id];
-      output =document.getElementById(info.title).innerHTML;
+      //info = clubs[marker.id];
+      //output =document.getElementById(info.title).innerHTML;
       infowindow.marker = marker;
-      infowindow.setContent(output);
+      //console.log(k)
+      //infowindow.setContent(output);
+      search = 'https://api.foursquare.com/v2/venues/search?client_id=EFJRVLNR02C5ARL21YDRPO4ZE0CXGEBNMVHQBILAQTIZN3CD&client_secret=4QZXSPT0ZVOKRACO2VOVKFMPLXQGCO2VPJWMLMVTJ4PXVCH5&ll=36.101340,-115.172182&query='+ clubs[k].title +'&v=20130815'; 
+      $.ajax({
+        url: search,
+        dataType: 'json',
+        success: function(data) {
+          var ve = data.response.venues[0];
+          var output = '';
+          output += '<div id="'+ clubs[k].title +'">';
+          output += '<h3>'+ clubs[k].title +'</h3>';
+          output += '<p>Address: '+ ve.location.address +'</p>';
+          if (ve.contact.facebookUsername !== undefined) {
+            output += '<p>FB: '+ ve.contact.facebookUsername +'</p>';
+          } else { output += '<p>FB: None </p>';}
+          output += '<p>Phone#: '+ ve.contact.phone +'</p>';
+          output += '</div>';
+          //append the info in the didden div that google map api can pull from;
+          infowindow.setContent(output)
+        }
+      }).fail(function(e) {alert('Request has failed...');});
+
       infowindow.open(map, marker);
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener('closeclick',function(){
