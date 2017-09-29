@@ -32,7 +32,7 @@ function initMap() {
         thatmarker.setAnimation(null);
       }, 2800);
       populateInfoWindow(thismarker, largeInfoWindow, l);
-    };
+    }
   //Make multiple markers and add infowindow infos thru loop.
   for(var i=0; i<clubs.length; i++) {
     var num = i;
@@ -58,7 +58,7 @@ function initMap() {
     marker.addListener('click', listener.bind(null, marker));
   }
   function listener(marker) {
-    Bouncer(marker, marker.id)   
+    Bouncer(marker, marker.id);
   }
   //populating the marker with info in the info window.
   function populateInfoWindow(marker, infowindow,k) {
@@ -82,7 +82,7 @@ function initMap() {
           output += '<p>Phone#: '+ ve.contact.phone +'</p>';
           output += '</div>';
           //append the info in the didden div that google map api can pull from;
-          infowindow.setContent(output)
+          infowindow.setContent(output);
         }
       }).fail(function(e) {alert('Request has failed...');});
 
